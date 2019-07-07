@@ -1,0 +1,13 @@
+--- linux-4.19.56/drivers/net/ethernet/ibm/emac/phy.c	2019-06-25 03:36:02.000000000 +0000
++++ linux/drivers/net/ethernet/ibm/emac/phy.c	2019-07-07 17:17:08.942576057 +0000
+@@ -71,6 +71,10 @@
+ 	}
+ 	if ((val & BMCR_ISOLATE) && limit > 0)
+ 		phy_write(phy, MII_BMCR, val & ~BMCR_ISOLATE);
++#ifdef CONFIG_OBS600
++	phy_write(phy, 0x1c, 0xa410);
++	phy_write(phy, 0x1c, 0x8804);
++#endif
+ 
+ 	return limit <= 0;
+ }

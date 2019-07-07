@@ -1,0 +1,7 @@
+.vagrant
+.DS_Store
+.vscode
+output/
+files/*.tar.xz
+files/*.diff
+tftp/

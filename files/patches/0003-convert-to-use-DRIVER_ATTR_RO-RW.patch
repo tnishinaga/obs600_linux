@@ -1,0 +1,49 @@
+From 70b47d513b180f7d7b0e2b8eb6d5ae13a2699141 Mon Sep 17 00:00:00 2001
+From: Toshifumi NISHINAGA <tnishinaga.dev@gmail.com>
+Date: Sat, 6 Jul 2019 08:17:35 +0000
+Subject: [PATCH 3/3] convert to use DRIVER_ATTR_RO/RW
+
+---
+ drivers/usb/dwc_otg/dwc_otg_driver.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/usb/dwc_otg/dwc_otg_driver.c b/drivers/usb/dwc_otg/dwc_otg_driver.c
+index dd0c92d4d..415c2f9f5 100644
+--- a/drivers/usb/dwc_otg/dwc_otg_driver.c
++++ b/drivers/usb/dwc_otg/dwc_otg_driver.c
+@@ -123,7 +123,7 @@ static ssize_t version_show(struct device_driver *dev, char *buf)
+         return snprintf(buf, sizeof(DWC_DRIVER_VERSION)+2,"%s\n", 
+                         DWC_DRIVER_VERSION);
+ }
+-static DRIVER_ATTR(version, S_IRUGO, version_show, NULL);
++static DRIVER_ATTR_RO(version);
+ 
+ /**
+  * Global Debug Level Mask.
+@@ -133,20 +133,20 @@ uint32_t g_dbg_lvl = 0xff; /* OFF */
+ /**
+  * This function shows the driver Debug Level.
+  */
+-static ssize_t dbg_level_show(struct device_driver *_drv, char *_buf)
++static ssize_t debuglevel_show(struct device_driver *_drv, char *_buf)
+ {
+         return sprintf(_buf, "0x%0x\n", g_dbg_lvl);
+ }
+ /**
+  * This function stores the driver Debug Level.
+  */
+-static ssize_t dbg_level_store(struct device_driver *_drv, const char *_buf, 
++static ssize_t debuglevel_store(struct device_driver *_drv, const char *_buf, 
+                                size_t _count)
+ {
+ 	g_dbg_lvl = simple_strtoul(_buf, NULL, 16);
+         return _count;
+ }
+-static DRIVER_ATTR(debuglevel, S_IRUGO|S_IWUSR, dbg_level_show, dbg_level_store);
++static DRIVER_ATTR_RW(debuglevel);
+ 
+ /**
+  * This function is called during module intialization to verify that
+-- 
+2.20.1
+

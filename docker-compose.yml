@@ -1,0 +1,38 @@
+version: '2'
+
+services:
+  ppc-linux-build:
+    build: .
+    volumes:
+      - ./output:/root/output:rw
+      - ./files:/root/files:ro
+    environment:
+      - ARCH=powerpc
+      - CROSS_COMPILE=powerpc-linux-gnu-
+      - INSTALL_MOD_PATH=/root/output/rootfs/
+      - INSTALL_PATH=/root/output/rootfs/boot/
+    command: |
+        bash -c "
+          mkdir -p /root/output/rootfs/boot
+          tar Jxf /root/files/linux-4.19.56.tar.xz
+          mv linux* linux
+          cd linux
+          patch -p1 < /root/files/patches/0001-Add-dwc_otg-usb-driver-from-plathome-kernel.patch
+          patch -p1 < /root/files/patches/0002-Replace-init_timer-to-timer_setup.patch
+          patch -p1 < /root/files/patches/0003-convert-to-use-DRIVER_ATTR_RO-RW.patch
+          patch -p1 < /root/files/patches/net.patcch
+          cp /root/files/dot.config.4.1.8 .config
+          cp /root/files/obs600.dts arch/powerpc/boot/dts/
+          make olddefconfig
+          make -j4
+          cp arch/powerpc/boot/uImage.obs600 /root/output/rootfs/boot/
+          make -j4 modules && make modules_install
+          bash
+        "
+
+  tftp-server:
+    image: pghalliday/tftp
+    volumes:
+      - ./tftp:/var/tftpboot:rw
+    ports:
+      - "0.0.0.0:69:69/udp"
