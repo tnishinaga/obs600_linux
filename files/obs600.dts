@@ -323,6 +323,6 @@
 	};
         chosen {
                 linux,stdout-path = "/plb/opb/serial@ef600200";
-				bootargs = "rootdelay=15 console=ttyS0,115200 earlyprintk";
+				bootargs = "root=/dev/sda2 roottype=ext4 rootdelay=15 console=ttyS0,115200 earlyprintk";
         };
 };

@@ -2,7 +2,7 @@ version: '2'
 
 services:
   ppc-linux-build:
-    build: .
+    build: ./docker/linux_ppc_buildenv
     volumes:
       - ./output:/root/output:rw
       - ./files:/root/files:ro
@@ -29,6 +29,23 @@ services:
           make -j4 modules && make modules_install
           bash
         "
+
+  gentoo_ppc_stage3:
+    build: ./docker/gentoo_ppc_stage3
+    volumes:
+      - /usr/bin/qemu-ppc-static:/usr/bin/qemu-ppc-static
+      - ./output/:/root/output
+      - ./files:/root/files
+    command: |
+      bash -c "
+        cd /root
+        emerge-webrsync
+        emerge rsync
+        cp /root/files/fstab /etc/fstab
+        rsync -v /root/output/rootfs/lib/modules/ /lib/modules/
+        echo root | passwd --stdin root
+      "
+    
 
   tftp-server:
     image: pghalliday/tftp

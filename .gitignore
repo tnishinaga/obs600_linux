@@ -5,3 +5,4 @@ output/
 files/*.tar.xz
 files/*.diff
 tftp/
+*.log
