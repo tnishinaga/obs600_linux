@@ -30,6 +30,28 @@ services:
           bash
         "
 
+  ppc-linux-build-vanilla:
+    build: ./docker/linux_ppc_buildenv
+    volumes:
+      - ./output:/root/output:rw
+      - ./files:/root/files:ro
+    environment:
+      - ARCH=powerpc
+      - CROSS_COMPILE=powerpc-linux-gnu-
+      - INSTALL_MOD_PATH=/root/output/rootfs/
+      - INSTALL_PATH=/root/output/rootfs/boot/
+    command: |
+        bash -c "
+          mkdir -p /root/output/rootfs/boot
+          wget https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.19.59.tar.xz
+          tar xf linux-4.19.59.tar.xz
+          cd linux-4.19.59
+          make 40x/obs600_defconfig
+          make olddefconfig && make -j4
+          cp arch/powerpc/boot/uImage.obs600 /root/output/rootfs/boot/
+          bash
+        "
+
   gentoo_ppc_stage3:
     build: ./docker/gentoo_ppc_stage3
     volumes:
@@ -43,7 +65,8 @@ services:
         emerge rsync
         cp /root/files/fstab /etc/fstab
         rsync -v /root/output/rootfs/lib/modules/ /lib/modules/
-        echo root | passwd --stdin root
+        echo 'root:RootPasword1234' | chpasswd
+        depmod
       "
     
 

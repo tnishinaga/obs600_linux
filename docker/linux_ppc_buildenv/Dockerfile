@@ -13,6 +13,8 @@ RUN apt-get update \
         u-boot-tools \
         kmod \
         file \
+        curl \
+        wget \
         device-tree-compiler \
         binutils-powerpc-linux-gnu \
         gcc-powerpc-linux-gnu \
